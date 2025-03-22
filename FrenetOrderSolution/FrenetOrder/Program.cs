@@ -1,8 +1,17 @@
 using FrenetOrder.Data;
+using FrenetOrder.Repository;
+using FrenetOrder.Repository.Interface;
+using FrenetOrder.Service;
+using FrenetOrder.Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddDbContext<DbContextClass>();
 

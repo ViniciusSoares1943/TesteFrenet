@@ -1,4 +1,5 @@
-﻿using FrenetOrder.Models.Entity;
+﻿using FrenetOrder.Models.Dto;
+using FrenetOrder.Models.Entity;
 using FrenetOrder.Repository.Interface;
 using FrenetOrder.Service.Interface;
 
@@ -27,7 +28,7 @@ namespace FrenetOrder.Service
             return await _customerRepository.Get();
         }
 
-        public async Task Update(int id, Customer customer)
+        public async Task Update(int id, CustomerInput customer)
         {
             if (id <= 0)
             {
@@ -37,11 +38,21 @@ namespace FrenetOrder.Service
             await _customerRepository.Update(id, customer);
         }
 
-        public async Task<Customer> Create(Customer customer)
+        public async Task<Customer> Create(CustomerInput customer)
         {
             var customerResult = await _customerRepository.Create(customer);
 
             return customerResult;
+        }
+
+        public async Task Remove(int id)
+        {
+            if (id <= 0)
+            {
+                throw new Exception("Operação não permitida, identificador não pode ser menor que zero");
+            }
+
+            await _customerRepository.Remove(id);
         }
 
     }

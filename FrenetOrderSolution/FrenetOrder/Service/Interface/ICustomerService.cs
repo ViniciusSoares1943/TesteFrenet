@@ -1,4 +1,5 @@
-﻿using FrenetOrder.Models.Entity;
+﻿using FrenetOrder.Models.Dto;
+using FrenetOrder.Models.Entity;
 
 namespace FrenetOrder.Service.Interface
 {
@@ -6,7 +7,8 @@ namespace FrenetOrder.Service.Interface
     {
         public Task<Customer> GetById(int id);
         public Task<List<Customer>> Get();
-        public Task Update(int id, Customer customer);
-        public Task<Customer> Create(Customer customer);
+        public Task Update(int id, CustomerInput customer);
+        public Task<Customer> Create(CustomerInput customer);
+        public Task Remove(int id);
     }
 }

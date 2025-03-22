@@ -23,6 +23,16 @@ namespace FrenetOrder.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasDefaultSchema("FrenetOrder");
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Cliente)
+                .WithMany()
+                .HasForeignKey(o => o.IdClient)
+                .HasConstraintName("FK_Pedidos_Clientes")
+                .HasPrincipalKey(o => o.Id);
+
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using FrenetOrder.Data;
+using FrenetOrder.Models.Dto;
 using FrenetOrder.Models.Entity;
 using FrenetOrder.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ namespace FrenetOrder.Repository
             return customerList;
         }
 
-        public async Task Update(int id, Customer customer)
+        public async Task Update(int id, CustomerInput customer)
         {
             var oldCustomer = await GetById(id);
             
@@ -48,13 +49,19 @@ namespace FrenetOrder.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Customer> Create(Customer customer)
+        public async Task<Customer> Create(CustomerInput customer)
         {
             await _context.Customers.AddAsync(customer);
             await _context.SaveChangesAsync();
             return customer;
         }
 
+        public async Task Remove (int id)
+        {
+            var customer = await GetById(id);
 
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+        }
     }
 }

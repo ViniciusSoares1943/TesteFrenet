@@ -1,4 +1,5 @@
-﻿using FrenetOrder.Models.Entity;
+﻿using FrenetOrder.Models.Dto;
+using FrenetOrder.Models.Entity;
 using FrenetOrder.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -7,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace FrenetOrder.Controllers
 {
     [ApiController]
-    [Authorize]
-    [Route("api/[controlller]")]
+    //[Authorize]
+    [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -49,7 +50,7 @@ namespace FrenetOrder.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<ActionResult> Update([FromQuery] int id, [FromBody] Customer customer)
+        public async Task<ActionResult> Update([FromQuery] int id, [FromBody] CustomerInput customer)
         {
             try
             {
@@ -63,9 +64,8 @@ namespace FrenetOrder.Controllers
             }
         }
 
-
         [HttpPost("Create")]
-        public async Task<ActionResult<Customer>> Create(Customer customer)
+        public async Task<ActionResult<Customer>> Create(CustomerInput customer)
         {
             try
             {
@@ -78,5 +78,21 @@ namespace FrenetOrder.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete("Remove")]
+        public async Task<ActionResult> Remove([FromQuery] int id)
+        {
+            try
+            {
+                await _customerService.Remove(id);
+
+                return Ok("Remoção realizada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
