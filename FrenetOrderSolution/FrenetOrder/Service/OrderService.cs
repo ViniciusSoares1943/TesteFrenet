@@ -59,7 +59,7 @@ namespace FrenetOrder.Service
             var orderResult = await _orderRepository.Create(new Order
             {
                 Cliente = customer,
-                IdClient = customer.Id,
+                IdCliente = customer.Id,
                 DataCriacao = DateTime.Now,
                 Destino = orderInput.Destino,
                 Origem = orderInput.Origem

@@ -11,7 +11,8 @@ namespace FrenetOrder.Models.Entity
         public int Id { get; set; }
         public Customer Cliente { get; set; }
         [Required]
-        public int IdClient { get; set; }
+        [ForeignKey(nameof(Cliente))]
+        public int IdCliente { get; set; }
         [Required]
         public string Origem { get; set; }
         [Required]

@@ -13,10 +13,12 @@ namespace FrenetOrder.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IShippingService _shippingService;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, IShippingService shippingService)
         {
             _orderService = orderService;
+            _shippingService = shippingService;
         }
 
         [HttpGet("GetById")]
@@ -56,7 +58,7 @@ namespace FrenetOrder.Controllers
             {
                 await _orderService.Update(id, order);
 
-                return Ok(order);
+                return Ok("Atualização realizada com sucesso!");
             }
             catch (Exception ex)
             {
@@ -93,6 +95,22 @@ namespace FrenetOrder.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("ShippingCalculate")]
+        public async Task<ActionResult<string>> ShippingCalculate()
+        {
+            try
+            {
+                var result = await _shippingService.Calculate();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
     }
 }
