@@ -49,7 +49,7 @@ namespace FrenetOrder.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Customer> Create(CustomerInput customer)
+        public async Task<Customer> Create(Customer customer)
         {
             await _context.Customers.AddAsync(customer);
             await _context.SaveChangesAsync();

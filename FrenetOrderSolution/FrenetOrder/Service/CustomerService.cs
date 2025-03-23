@@ -40,7 +40,13 @@ namespace FrenetOrder.Service
 
         public async Task<Customer> Create(CustomerInput customer)
         {
-            var customerResult = await _customerRepository.Create(customer);
+            var customerResult = await _customerRepository.Create(new Customer
+            {
+                Nome = customer.Nome, 
+                Endereco = customer.Endereco,
+                Telefone = customer.Telefone,
+                Email = customer.Email
+            });
 
             return customerResult;
         }
