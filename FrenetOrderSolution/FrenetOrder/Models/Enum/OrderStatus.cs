@@ -2,6 +2,9 @@
 
 namespace FrenetOrder.Models.Enum
 {
+    /// <summary>
+    /// Status do pedido 1-Em processamento, 2-Enviado, 3-Entregue, 4-Cancelado
+    /// </summary>
     public enum OrderStatus
     {
         [Description("Em Processamento")]

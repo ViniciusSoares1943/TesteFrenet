@@ -17,7 +17,7 @@ namespace FrenetOrder.Models.Dto
     public class GetShippingQuoteRequest
     {
         [XmlElement("quoteRequest")]
-        public QuoteRequest quoteRequest { get; set; }
+        public QuoteRequest QuoteRequest { get; set; }
     }
 
     public class QuoteRequest

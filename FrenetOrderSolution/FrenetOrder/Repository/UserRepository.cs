@@ -17,14 +17,9 @@ namespace FrenetOrder.Repository
 
         public async Task<User> GetByLogin(string login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Login.ToLower() == login.ToLower());
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Login.ToLower().Equals(login.ToLower()));
 
-            if (user == null)
-            {
-                throw new Exception($"Usuário não encontrado com este login {login}");
-            }
-
-            return user;
+            return user ?? throw new Exception($"Usuário não encontrado com este login {login}");
         }
 
         public async Task<User> Login(string login, string password)
@@ -61,11 +56,10 @@ namespace FrenetOrder.Repository
             await _context.SaveChangesAsync();
         }
 
-        private string HashPassword(string password)
+        private static string HashPassword(string password)
         {
-            using var sha256 = SHA256.Create();
             var byteValue = Encoding.UTF8.GetBytes(password);
-            var byteHash = sha256.ComputeHash(byteValue);
+            var byteHash = SHA256.HashData(byteValue);
             return Convert.ToBase64String(byteHash);
         }
 

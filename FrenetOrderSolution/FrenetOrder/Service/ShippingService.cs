@@ -14,36 +14,30 @@ namespace FrenetOrder.Service
             _configuration = configuration;
         }
 
-        public async Task<string> Calculate()
+        public async Task<ShippingQuoteResponseEnvelope> Calculate(ShippingCalculateInput input)
         {
-            var httpClient = new HttpClient();
-
-
-            // Criação da entidade
+            
             var shippingQuoteRequest = new GetShippingQuoteRequest
             {
-                quoteRequest = new QuoteRequest
+                QuoteRequest = new QuoteRequest
                 {
-                    Username = _configuration["Frenet:Username"],
-                    Password = _configuration["Frenet:Password"],
-                    SellerCEP = "01001-000",
-                    RecipientCEP = "20031-170",
-                    RecipientDocument = "12345678900",
-                    ShipmentInvoiceValue = 100.00M,
-                    ShippingItemArray = new List<ShippingItem>
+                    Username = _configuration["Frenet:Username"] ?? throw new Exception("Erro interno ao integrar com api de cálculo de frete, credenciais não informadas"),
+                    Password = _configuration["Frenet:Password"] ?? throw new Exception("Erro interno ao integrar com api de cálculo de frete, credenciais não informadas"),
+                    SellerCEP = input.CepOrigem.ToString("00000-000"),
+                    RecipientCEP = input.CepDestino.ToString("00000-000"),
+                    RecipientDocument = input.DocumentoDestinatario,
+                    ShipmentInvoiceValue = input.ValorPedido,
+                    ShippingItemArray = input.ItemEnvio.Select(x => new ShippingItem 
                     {
-                        new ShippingItem
-                        {
-                            Weight = 1.5M,
-                            Length = 20M,
-                            Height = 10M,
-                            Width = 15M,
-                            Diameter = 5M,
-                            IsFragile = false,
-                            Quantity = "1",
-                            ProductName = "Produto Exemplo"
-                        }
-                    },
+                        Weight = x.Peso,
+                        Length = x.Largura,
+                        Height = x.Altura,
+                        Width = x.Cumprimento,
+                        Diameter = x.Diametro,
+                        IsFragile = x.Fragio,
+                        Quantity = x.Quantidade.ToString(),
+                        ProductName = x.NomeProduto
+                    }).ToList(),
                     RecipientCountry = "BR",
                     IsCubicWeight = true
                 }
@@ -57,40 +51,56 @@ namespace FrenetOrder.Service
                 }
             };
 
-            // Serializar o objeto para XML
             var xmlPayload = SerializeObjectToXml(body).Replace("soap_x003A_", "");
 
-            // Criar a requisição HTTP
             var request = new HttpRequestMessage(HttpMethod.Post, _configuration["Frenet:Url"] + _configuration["Frenet:ShippingQuotePath"])
             {
                 Content = new StringContent(xmlPayload, Encoding.UTF8, "text/xml")
             };
 
-            // Adicionar o cabeçalho SOAPAction
             request.Headers.Add("SOAPAction", _configuration["Frenet:SoapActionQuote"]);
             request.Headers.Add("Authorization", _configuration["Frenet:Token"]);
 
-            // Enviar a requisição e obter a resposta
+            var httpClient = new HttpClient();
             var response = await httpClient.SendAsync(request);
 
-            // Garantir que a resposta foi bem-sucedida
             response.EnsureSuccessStatusCode();
-
-            // Ler a resposta como string
             var responseString = await response.Content.ReadAsStringAsync();
 
-            return responseString;
+            try
+            {
+                var shippingQuorte = DeserializeSoapResponse(responseString);
+                return shippingQuorte;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro interno ao ler resposta da api de fretes");
+            }
         }
 
         public string SerializeObjectToXml(object obj)
         {
             var serializer = new XmlSerializer(obj.GetType());
 
-            using (var memoryStream = new MemoryStream())
-            {
-                serializer.Serialize(memoryStream, obj);
-                return Encoding.UTF8.GetString(memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            serializer.Serialize(memoryStream, obj);
+            return Encoding.UTF8.GetString(memoryStream.ToArray());
+        }
+
+
+        public ShippingQuoteResponseEnvelope DeserializeSoapResponse(string xml)
+        {
+            var serializer = new XmlSerializer(typeof(ShippingQuoteResponseEnvelope));
+
+            var reader = new StringReader(xml);
+
+            var ns = new XmlSerializerNamespaces();
+            ns.Add("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+            ns.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            ns.Add("xsd", "http://www.w3.org/2001/XMLSchema");
+
+            var response = serializer.Deserialize(reader);
+            return response as ShippingQuoteResponseEnvelope ?? throw new Exception("Erro interno ao ler resposta da api de fretes");
         }
     }
 }

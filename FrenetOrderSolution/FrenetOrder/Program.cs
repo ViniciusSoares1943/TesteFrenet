@@ -6,13 +6,19 @@ using FrenetOrder.Service.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Config;
+using NLog.Targets;
+using NLog;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using NLog.Web;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+using NLog.Extensions.Logging;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-
 // Add services to the container.
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -27,7 +33,14 @@ builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddDbContext<DbContextClass>();
 
-var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
+LogManager.Setup().LoadConfigurationFromFile("nlog.config");
+
+builder.Logging.ClearProviders();
+builder.Logging.AddNLog();
+
+builder.Logging.AddFilter("FrenetOrder", LogLevel.Information);
+
+var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? throw new Exception("Erro interno ao iniciar aplicação, configurações de autenticação não informadas"));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

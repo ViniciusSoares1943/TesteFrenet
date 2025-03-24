@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,6 +7,7 @@
     <UserSecretsId>42836991-1a28-4d9b-a2e6-142bda75462b</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  <NoWarn>$(NoWarn);CS1591;CS8618;IDE0290</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="NLog" Version="5.4.0" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 

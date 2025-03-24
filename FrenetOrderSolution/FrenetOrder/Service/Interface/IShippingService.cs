@@ -1,8 +1,10 @@
-﻿namespace FrenetOrder.Service.Interface
+﻿using FrenetOrder.Models.Dto;
+
+namespace FrenetOrder.Service.Interface
 {
     public interface IShippingService
     {
-        public Task<string> Calculate();
+        public Task<ShippingQuoteResponseEnvelope> Calculate(ShippingCalculateInput input);
 
     }
 }

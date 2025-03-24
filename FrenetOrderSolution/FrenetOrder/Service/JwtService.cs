@@ -3,38 +3,41 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-public class JwtService
+namespace FrenetOrder.Service
 {
-    private readonly IConfiguration _configuration;
-
-    public JwtService(IConfiguration configuration)
+    public class JwtService
     {
-        _configuration = configuration;
-    }
+        private readonly IConfiguration _configuration;
 
-    public string GenerateToken(string userId, string login)
-    {
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-        var issuer = _configuration["Jwt:Issuer"];
-        var audience = _configuration["Jwt:Audience"];
-
-        var claims = new List<Claim>
+        public JwtService(IConfiguration configuration)
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId),
-            new Claim(JwtRegisteredClaimNames.Name, login),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            _configuration = configuration;
+        }
+
+        public string GenerateToken(string userId, string login)
+        {
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new Exception("Erro interno ao gerar token"));
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+
+            var claims = new List<Claim>
+        {
+            new (JwtRegisteredClaimNames.Sub, userId),
+            new (JwtRegisteredClaimNames.Name, login),
+            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            issuer: issuer,
-            audience: audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: credentials
-        );
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: credentials
+            );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
