@@ -28,7 +28,7 @@ CREATE TABLE FrenetOrder.Clientes (
     Nome NVARCHAR(255) NOT NULL,
     Endereco NVARCHAR(500) NOT NULL,
     Telefone NVARCHAR(50) NOT NULL,
-    Email NVARCHAR(255) NOT NULL UNIQUE
+    Email NVARCHAR(255) NOT NULL
 );
 GO
 
@@ -44,7 +44,15 @@ CREATE TABLE FrenetOrder.Pedidos (
 );
 GO
 
--- 7 Da permissoes ao usuario nas tabelas criadas
+-- 7 Cria tabela de usuários (autenticação)
+CREATE TABLE FrenetOrder.Usuarios (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Login NVARCHAR(255) NOT NULL UNIQUE,
+    Senha NVARCHAR(500) NOT NULL,
+);
+GO
+
+-- 8 Da permissoes ao usuario nas tabelas criadas
 GRANT CONTROL ON SCHEMA::FrenetOrder TO FrenetUser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA::FrenetOrder TO FrenetUser;
 GO

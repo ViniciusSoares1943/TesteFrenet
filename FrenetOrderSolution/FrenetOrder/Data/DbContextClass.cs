@@ -7,6 +7,7 @@ namespace FrenetOrder.Data
     {
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<User> Users { get; set; }
 
         IConfiguration _configuration;
         public DbContextClass(DbContextOptions<DbContextClass> options, IConfiguration configuration) : base(options)
