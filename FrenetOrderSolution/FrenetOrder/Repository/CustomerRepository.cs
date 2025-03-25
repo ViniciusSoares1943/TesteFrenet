@@ -18,12 +18,8 @@ namespace FrenetOrder.Repository
         public async Task<Customer> GetById(int id)
         {
             var customer = await _context.Customers.FirstOrDefaultAsync(customer => customer.Id == id);
-            if (customer == null)
-            {
-                throw new Exception("Cliente não encontrado!");
-            }
 
-            return customer;
+            return customer ?? throw new Exception("Cliente não encontrado!");
         }
 
         public async Task<List<Customer>> Get()

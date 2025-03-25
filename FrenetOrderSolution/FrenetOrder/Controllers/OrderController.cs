@@ -36,7 +36,7 @@ namespace FrenetOrder.Controllers
             try
             {
                 var order = await _orderService.GetById(id);
-                _logger.LogInformation($"Pedido {id} obtido");
+                _logger.LogInformation("Pedido {id} obtido", id);
                 return Ok(order);
             }
             catch (Exception ex)
@@ -84,7 +84,7 @@ namespace FrenetOrder.Controllers
             try
             {
                 await _orderService.Update(id, order);
-                _logger.LogInformation($"Pedido {id} atualizado");
+                _logger.LogInformation("Pedido {id} atualizado", id);
                 return Ok("Atualização realizada com sucesso!");
             }
             catch (Exception ex)
@@ -132,7 +132,7 @@ namespace FrenetOrder.Controllers
             try
             {
                 await _orderService.Remove(id);
-                _logger.LogInformation($"Pedido {id} removido");
+                _logger.LogInformation("Pedido {id} removido", id);
                 return Ok("Remoção realizada com sucesso!");
             }
             catch (Exception ex)

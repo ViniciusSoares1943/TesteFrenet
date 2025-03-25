@@ -6,13 +6,13 @@
     public class ShippingCalculateInput
     {
         /// <summary>
-        /// CEP de origem
+        /// CEP de origem (somente numericos)
         /// </summary>
-        public int CepOrigem { get; set; }
+        public string CepOrigem { get; set; }
         /// <summary>
-        /// CEP de destino
+        /// CEP de destino (somente numericos)
         /// </summary>
-        public int CepDestino { get; set; }
+        public string CepDestino { get; set; }
         /// <summary>
         /// Documento do destinatario
         /// </summary>

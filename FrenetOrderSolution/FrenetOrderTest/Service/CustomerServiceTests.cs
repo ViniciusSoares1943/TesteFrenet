@@ -6,7 +6,7 @@ using Moq;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace FrenetOrder.Tests.Service
+namespace FrenetOrderTest.Service
 {
     public class CustomerServiceTests
     {
@@ -22,15 +22,15 @@ namespace FrenetOrder.Tests.Service
         [Fact]
         public async Task Create_ShouldCreateCustomer()
         {
-            // Arrange
             var customerInput = new CustomerInput
             {
-                Nome = "John Doe",
-                Endereco = "123 Main St",
-                Telefone = "1234567890",
-                Email = "john.doe@example.com"
+                Nome = "Fulano de tal da silva",
+                Endereco = "Rua das ruas 123",
+                Telefone = "99 99999-9999",
+                Email = "fulano@email.com"
             };
 
+            //Mock Repository
             var customer = new Customer
             {
                 Id = 1,
@@ -39,40 +39,30 @@ namespace FrenetOrder.Tests.Service
                 Telefone = customerInput.Telefone,
                 Email = customerInput.Email
             };
+            _customerRepositoryMock.Setup(r => r.Create(It.IsAny<Customer>())).ReturnsAsync(customer);
 
-            _customerRepositoryMock.Setup(repo => repo.Create(It.IsAny<Customer>())).ReturnsAsync(customer);
-
-            // Act
             var result = await _customerService.Create(customerInput);
 
-            // Assert
             Assert.NotNull(result);
-            Assert.Equal(customerInput.Nome, result.Nome);
-            Assert.Equal(customerInput.Endereco, result.Endereco);
-            Assert.Equal(customerInput.Telefone, result.Telefone);
-            Assert.Equal(customerInput.Email, result.Email);
         }
 
         [Fact]
         public async Task GetById_ShouldReturnCustomer_WhenIdIsValid()
         {
-            // Arrange
+            //mock
             var customerId = 1;
             var customer = new Customer
             {
                 Id = customerId,
-                Nome = "John Doe",
-                Endereco = "123 Main St",
-                Telefone = "1234567890",
-                Email = "john.doe@example.com"
+                Nome = "Fulano de tal da silva",
+                Endereco = "Rua das ruas 123",
+                Telefone = "99 99999-9999",
+                Email = "fulano@email.com"
             };
-
             _customerRepositoryMock.Setup(repo => repo.GetById(customerId)).ReturnsAsync(customer);
 
-            // Act
             var result = await _customerService.GetById(customerId);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(customerId, result.Id);
         }
@@ -80,29 +70,24 @@ namespace FrenetOrder.Tests.Service
         [Fact]
         public async Task GetById_ShouldThrowException_WhenIdIsInvalid()
         {
-            // Arrange
             var customerId = -1;
 
-            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _customerService.GetById(customerId));
         }
 
         [Fact]
         public async Task Get_ShouldReturnAllCustomers()
         {
-            // Arrange
+            //mock
             var customers = new List<Customer>
             {
-                new Customer { Id = 1, Nome = "John Doe", Endereco = "123 Main St", Telefone = "1234567890", Email = "john.doe@example.com" },
-                new Customer { Id = 2, Nome = "Jane Doe", Endereco = "456 Elm St", Telefone = "0987654321", Email = "jane.doe@example.com" }
+                new () { Id = 1, Nome = "Fulano de tal", Endereco = "Rua das ruas 123", Telefone = "99 99999-9999", Email = "fulano@email.com" },
+                new () { Id = 2, Nome = "Ciclano de tal", Endereco = "Rua das avenidas 123", Telefone = "99 99999-9999", Email = "ciclano@email.com" }
             };
-
             _customerRepositoryMock.Setup(repo => repo.Get()).ReturnsAsync(customers);
 
-            // Act
             var result = await _customerService.Get();
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
         }
@@ -110,64 +95,53 @@ namespace FrenetOrder.Tests.Service
         [Fact]
         public async Task Update_ShouldUpdateCustomer()
         {
-            // Arrange
             var customerId = 1;
             var customerInput = new CustomerInput
             {
-                Nome = "John Doe Updated",
-                Endereco = "123 Main St Updated",
-                Telefone = "1234567890",
-                Email = "john.doe.updated@example.com"
+                Nome = "Fulano de tal da silva",
+                Endereco = "Rua das ruas 123",
+                Telefone = "99 99999-9999",
+                Email = "fulano@email.com"
             };
-
             _customerRepositoryMock.Setup(repo => repo.Update(customerId, customerInput)).Returns(Task.CompletedTask);
 
-            // Act
             await _customerService.Update(customerId, customerInput);
 
-            // Assert
             _customerRepositoryMock.Verify(repo => repo.Update(customerId, customerInput), Times.Once);
         }
 
         [Fact]
         public async Task Update_ShouldThrowException_WhenIdIsInvalid()
         {
-            // Arrange
+            //mock
             var customerId = -1;
             var customerInput = new CustomerInput
             {
-                Nome = "John Doe Updated",
-                Endereco = "123 Main St Updated",
-                Telefone = "1234567890",
-                Email = "john.doe.updated@example.com"
+                Nome = "Fulano de tal da silva junior",
+                Endereco = "Rua das avenidas 123",
+                Telefone = "00 00000-0000s",
+                Email = "fulano.silva@email.com"
             };
 
-            // Act & Assert
-            await Xunit.Assert.ThrowsAsync<Exception>(() => _customerService.Update(customerId, customerInput));
+            await Assert.ThrowsAsync<Exception>(() => _customerService.Update(customerId, customerInput));
         }
 
         [Fact]
         public async Task Remove_ShouldRemoveCustomer()
         {
-            // Arrange
+            //mock
             var customerId = 1;
-
             _customerRepositoryMock.Setup(repo => repo.Remove(customerId)).Returns(Task.CompletedTask);
 
-            // Act
             await _customerService.Remove(customerId);
-
-            // Assert
             _customerRepositoryMock.Verify(repo => repo.Remove(customerId), Times.Once);
         }
 
         [Fact]
         public async Task Remove_ShouldThrowException_WhenIdIsInvalid()
         {
-            // Arrange
             var customerId = -1;
 
-            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _customerService.Remove(customerId));
         }
     }

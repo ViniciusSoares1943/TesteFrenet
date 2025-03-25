@@ -16,18 +16,14 @@ namespace FrenetOrder.Repository
 
         public async Task<Order> GetById(int id)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(order => order.Id == id);
-            if (order == null)
-            {
-                throw new Exception("Pedido não encontrado!");
-            }
+            var order = await _context.Orders.Include(x => x.Cliente).FirstOrDefaultAsync(order => order.Id == id);
 
-            return order;
+            return order ?? throw new Exception("Pedido não encontrado!");
         }
 
         public async Task<List<Order>> Get()
         {
-            var orderList = await _context.Orders.ToListAsync();
+            var orderList = await _context.Orders.Include(x => x.Cliente).ToListAsync();
             if (orderList == null || orderList.Count == 0)
             {
                 throw new Exception("Nenhum pedido encontrado!");

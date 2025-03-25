@@ -8,8 +8,8 @@ namespace FrenetOrder.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly JwtService _jwtService;
-        public UserService(IUserRepository userRepository, JwtService jwtService)
+        private readonly IJwtService _jwtService;
+        public UserService(IUserRepository userRepository, IJwtService jwtService)
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
@@ -25,9 +25,14 @@ namespace FrenetOrder.Service
 
         public async Task<User> Create(UserCreateInput user)
         {
-            if (user.Senha.Count() < 5)
+            if (user.Senha.Length < 5)
             {
                 throw new Exception("Erro ao criar usuário, senha precisar ter mais de 5 caracteres");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Login))
+            {
+                throw new Exception("login deve ser válido");
             }
 
             var userResult = await _userRepository.Create(new User
@@ -41,6 +46,11 @@ namespace FrenetOrder.Service
 
         public async Task Remove(string login)
         {
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                throw new Exception("login deve ser válido");
+            }
+
             await _userRepository.Remove(login);
         }
     }

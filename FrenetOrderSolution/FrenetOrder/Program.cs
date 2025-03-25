@@ -29,7 +29,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShippingService, ShippingService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<IJwtService, JwtService>();
 
 builder.Services.AddDbContext<DbContextClass>();
 

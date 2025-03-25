@@ -1,11 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using FrenetOrder.Service.Interface;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FrenetOrder.Service
 {
-    public class JwtService
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
 
@@ -21,11 +22,11 @@ namespace FrenetOrder.Service
             var audience = _configuration["Jwt:Audience"];
 
             var claims = new List<Claim>
-        {
-            new (JwtRegisteredClaimNames.Sub, userId),
-            new (JwtRegisteredClaimNames.Name, login),
-            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+            {
+                new (JwtRegisteredClaimNames.Sub, userId),
+                new (JwtRegisteredClaimNames.Name, login),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
             var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 

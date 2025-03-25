@@ -2,6 +2,7 @@
 using FrenetOrder.Models.Dto;
 using System.Xml.Serialization;
 using FrenetOrder.Service.Interface;
+using System.Text.RegularExpressions;
 
 namespace FrenetOrder.Service
 {
@@ -16,14 +17,17 @@ namespace FrenetOrder.Service
 
         public async Task<List<ShippingSevices>> ShippingCalculate(ShippingCalculateInput input)
         {
-            if (input.CepDestino < 10000000 || input.CepDestino > 99999999)
+
+            var regexValidaCep = new Regex(@"\d{8}");
+
+            if (!regexValidaCep.IsMatch(input.CepOrigem))
             {
-                throw new Exception("Cep de destino inválido!");
+                throw new Exception("Cep de origem inválido, deve sera apenas números!");
             }
 
-            if (input.CepOrigem < 10000000 || input.CepOrigem > 99999999)
+            if (!regexValidaCep.IsMatch(input.CepDestino))
             {
-                throw new Exception("Cep de origem inválido!");
+                throw new Exception("Cep de destino inválido, deve sera apenas números!");
             }
 
             if (input.ItemEnvio.Count == 0)
@@ -60,8 +64,8 @@ namespace FrenetOrder.Service
                 {
                     Username = _configuration["Frenet:Username"] ?? throw new Exception("Erro interno ao integrar com api de cálculo de frete, credenciais não informadas"),
                     Password = _configuration["Frenet:Password"] ?? throw new Exception("Erro interno ao integrar com api de cálculo de frete, credenciais não informadas"),
-                    SellerCEP = input.CepOrigem.ToString("00000-000"),
-                    RecipientCEP = input.CepDestino.ToString("00000-000"),
+                    SellerCEP = input.CepOrigem.Insert(5,"-"),
+                    RecipientCEP = input.CepDestino.Insert(5, "-"),
                     RecipientDocument = input.DocumentoDestinatario,
                     ShipmentInvoiceValue = input.ValorPedido,
                     ShippingItemArray = input.ItemEnvio.Select(x => new ShippingItem 
@@ -115,7 +119,7 @@ namespace FrenetOrder.Service
             }
         }
 
-        public string SerializeObjectToXml(object obj)
+        private static string SerializeObjectToXml(object obj)
         {
             var serializer = new XmlSerializer(obj.GetType());
 
@@ -124,8 +128,7 @@ namespace FrenetOrder.Service
             return Encoding.UTF8.GetString(memoryStream.ToArray());
         }
 
-
-        public ShippingQuoteResponseEnvelope DeserializeSoapResponse(string xml)
+        private static ShippingQuoteResponseEnvelope DeserializeSoapResponse(string xml)
         {
             var serializer = new XmlSerializer(typeof(ShippingQuoteResponseEnvelope));
 
