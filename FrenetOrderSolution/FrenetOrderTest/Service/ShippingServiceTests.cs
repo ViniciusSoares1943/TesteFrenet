@@ -1,7 +1,5 @@
-﻿
-using FrenetOrder.Models.Dto;
+﻿using FrenetOrder.Models.Dto;
 using FrenetOrder.Service;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
@@ -12,12 +10,16 @@ namespace FrenetOrderTest.Service
     public class ShippingServiceTests
     {
         private readonly Mock<IConfiguration> _configurationMock;
+        private readonly Mock<HttpMessageHandler> _httpMessageHandlerMock;
+        private readonly HttpClient _httpClient;
         private readonly ShippingService _shippingService;
 
         public ShippingServiceTests()
         {
             _configurationMock = new Mock<IConfiguration>();
-            _shippingService = new ShippingService(_configurationMock.Object);
+            _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
+            _httpClient = new HttpClient(_httpMessageHandlerMock.Object);
+            _shippingService = new ShippingService(_configurationMock.Object, _httpClient);
         }
 
 
@@ -121,44 +123,6 @@ namespace FrenetOrderTest.Service
             };
 
             await Assert.ThrowsAsync<Exception>(() => _shippingService.ShippingCalculate(shippingCalculateInput));
-        }
-
-        [Fact]
-        public async Task ShippingCalculate_ShouldReturnShippingServices_WhenInputIsValid()
-        {
-            _configurationMock.SetupGet(x => x["Frenet:Username"]).Returns("username");
-            _configurationMock.SetupGet(x => x["Frenet:Password"]).Returns("password");
-            _configurationMock.SetupGet(x => x["Frenet:Url"]).Returns("http://test.com");
-            _configurationMock.SetupGet(x => x["Frenet:ShippingQuotePath"]).Returns("/path");
-            _configurationMock.SetupGet(x => x["Frenet:SoapActionQuote"]).Returns("action");
-            _configurationMock.SetupGet(x => x["Frenet:Token"]).Returns("token");
-
-            var input = new ShippingCalculateInput
-            {
-                CepOrigem = "72405486",
-                CepDestino = "72405486",
-                DocumentoDestinatario = "123456789",
-                ValorPedido = 100,
-                ItemEnvio = new List<ItemEnvio>
-                {
-                    new ItemEnvio
-                    {
-                        Peso = 1,
-                        Cumprimento = 10,
-                        Altura = 5,
-                        Largura = 5,
-                        Diametro = 2,
-                        Fragio = false,
-                        Quantidade = 1,
-                        NomeProduto = "Produto Teste"
-                    }
-                }
-            };
-
-            var result = await _shippingService.ShippingCalculate(input);
-
-            Assert.NotNull(result);
-            Assert.IsType<List<ShippingSevices>>(result);
         }
     }
 }

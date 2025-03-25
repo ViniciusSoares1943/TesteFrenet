@@ -6,14 +6,16 @@ using System.Text.RegularExpressions;
 
 namespace FrenetOrder.Service
 {
-    public class ShippingService : IShippingService
-    {
-        private readonly IConfiguration _configuration;
-
-        public ShippingService(IConfiguration configuration)
+        public class ShippingService : IShippingService
         {
-            _configuration = configuration;
-        }
+            private readonly IConfiguration _configuration;
+            private readonly HttpClient _httpClient;
+
+            public ShippingService(IConfiguration configuration, HttpClient httpClient)
+            {
+                _configuration = configuration;
+                _httpClient = httpClient;
+            }
 
         public async Task<List<ShippingSevices>> ShippingCalculate(ShippingCalculateInput input)
         {
@@ -103,7 +105,7 @@ namespace FrenetOrder.Service
             request.Headers.Add("Authorization", _configuration["Frenet:Token"]);
 
             var httpClient = new HttpClient();
-            var response = await httpClient.SendAsync(request);
+            var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();

@@ -6,8 +6,6 @@ using FrenetOrder.Service.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NLog.Config;
-using NLog.Targets;
 using NLog;
 using System.Reflection;
 using System.Text;
@@ -32,6 +30,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IJwtService, JwtService>();
 
 builder.Services.AddDbContext<DbContextClass>();
+
+builder.Services.AddHttpClient<IShippingService, ShippingService>();
 
 LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 
