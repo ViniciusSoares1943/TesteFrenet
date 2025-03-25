@@ -14,7 +14,44 @@ namespace FrenetOrder.Service
             _configuration = configuration;
         }
 
-        public async Task<ShippingQuoteResponseEnvelope> Calculate(ShippingCalculateInput input)
+        public async Task<List<ShippingSevices>> ShippingCalculate(ShippingCalculateInput input)
+        {
+            if (input.CepDestino < 10000000 || input.CepDestino > 99999999)
+            {
+                throw new Exception("Cep de destino inválido!");
+            }
+
+            if (input.CepOrigem < 10000000 || input.CepOrigem > 99999999)
+            {
+                throw new Exception("Cep de origem inválido!");
+            }
+
+            if (input.ItemEnvio.Count == 0)
+            {
+                throw new Exception("Item de envio vazio!");
+            }
+
+            if (input.ItemEnvio.Any(x => x.Quantidade <= 0))
+            {
+                throw new Exception("Quantidade de item de envio inválida!");
+            }
+
+            var shippingQuoteResponse = await Calculate(input);
+
+            if (
+                shippingQuoteResponse == null 
+                || shippingQuoteResponse.Body is null 
+                || shippingQuoteResponse.Body.GetShippingQuoteResponse is null
+                || shippingQuoteResponse.Body.GetShippingQuoteResponse.GetShippingQuoteResult is null
+                || shippingQuoteResponse.Body.GetShippingQuoteResponse.GetShippingQuoteResult.ShippingSevicesArray.Count == 0)
+            {
+                throw new Exception("Erro ao calcular frete!");
+            }
+
+            return shippingQuoteResponse.Body.GetShippingQuoteResponse.GetShippingQuoteResult.ShippingSevicesArray;
+        }
+
+        private async Task<ShippingQuoteResponseEnvelope> Calculate(ShippingCalculateInput input)
         {
             
             var shippingQuoteRequest = new GetShippingQuoteRequest
@@ -30,9 +67,9 @@ namespace FrenetOrder.Service
                     ShippingItemArray = input.ItemEnvio.Select(x => new ShippingItem 
                     {
                         Weight = x.Peso,
-                        Length = x.Largura,
+                        Length = x.Cumprimento,
                         Height = x.Altura,
-                        Width = x.Cumprimento,
+                        Width = x.Largura,
                         Diameter = x.Diametro,
                         IsFragile = x.Fragio,
                         Quantity = x.Quantidade.ToString(),

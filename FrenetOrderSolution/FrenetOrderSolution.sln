@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenetOrder", "FrenetOrder\FrenetOrder.csproj", "{0F7A1312-8090-4794-9145-C178C1583353}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenetOrderTest", "FrenetOrderTest\FrenetOrderTest.csproj", "{EC43C013-639A-4EFA-9539-9740E89A97EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{0F7A1312-8090-4794-9145-C178C1583353}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F7A1312-8090-4794-9145-C178C1583353}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F7A1312-8090-4794-9145-C178C1583353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC43C013-639A-4EFA-9539-9740E89A97EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC43C013-639A-4EFA-9539-9740E89A97EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC43C013-639A-4EFA-9539-9740E89A97EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC43C013-639A-4EFA-9539-9740E89A97EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4CE95AC0-7DFC-4198-ABE1-611F062B453F}
 	EndGlobalSection
 EndGlobal

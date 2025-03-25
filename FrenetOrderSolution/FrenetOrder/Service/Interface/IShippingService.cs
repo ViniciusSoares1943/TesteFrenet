@@ -4,7 +4,7 @@ namespace FrenetOrder.Service.Interface
 {
     public interface IShippingService
     {
-        public Task<ShippingQuoteResponseEnvelope> Calculate(ShippingCalculateInput input);
+        public Task<List<ShippingSevices>> ShippingCalculate(ShippingCalculateInput input);
 
     }
 }

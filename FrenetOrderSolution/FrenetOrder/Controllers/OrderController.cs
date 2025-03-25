@@ -151,11 +151,11 @@ namespace FrenetOrder.Controllers
         /// <response code = "401" > Não autenticado!</response>
         /// <response code = "500" > Erro interno ao calcular frete!</response>
         [HttpPost("ShippingCalculate")]
-        public async Task<ActionResult<string>> ShippingCalculate([FromBody] ShippingCalculateInput input)
+        public async Task<ActionResult<List<ShippingSevices>>> ShippingCalculate([FromBody] ShippingCalculateInput input)
         {
             try
             {
-                var result = await _shippingService.Calculate(input);
+                var result = await _shippingService.ShippingCalculate(input);
                 _logger.LogInformation($"Frete calculado");
                 return Ok(result);
             }
