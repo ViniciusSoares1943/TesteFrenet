@@ -115,7 +115,7 @@ namespace FrenetOrder.Service
                 var shippingQuorte = DeserializeSoapResponse(responseString);
                 return shippingQuorte;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("Erro interno ao ler resposta da api de fretes");
             }

@@ -1,12 +1,17 @@
 services:
   app:
-    build: .\FrenetOrderSolution\FrenetOrder .
+    build:
+      context: .
+      dockerfile: FrenetOrderSolution/FrenetOrder/Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:80"
     depends_on:
       - db
+    volumes:
+      - ~/.aspnet/https:/https:ro
     environment:
-      - ConnectionStrings__DefaultConnection=Server=db;Database=MinhaAplicacaoDB;User Id=sa;Password=MinhaSenha123;
+      - ASPNETCORE_URLS=http://+:80
+      - TZ=America/Sao_Paulo
 
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -14,6 +19,6 @@ services:
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "T3$te&5EC7#0)ç"
+      SA_PASSWORD: "T3@te&5EC70)*"
       ACCEPT_EULA: "Y"
     restart: always
